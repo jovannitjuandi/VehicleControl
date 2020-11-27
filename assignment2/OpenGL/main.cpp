@@ -352,7 +352,7 @@ void drawLaser() {
 	// TODO: swap the following for your actual laser scans
 	for (int x = -5; x < 5; ++x) {
 		//addLine(x, -x * x / 10 + 2.5);
-		addLine(LaserSMObjPtr->Y, LaserSMObjPtr->X);
+		addLine(-LaserSMObjPtr->Y, LaserSMObjPtr->X);
 	}
 	glEnd();
 	glPopMatrix();
@@ -363,3 +363,27 @@ void addLine(double x, double y) {
 	glVertex3f(y, 1.0, x);
 };
 
+void drawGPS() {
+	glPushMatrix();
+	vehicle->positionInGL();
+	glTranslated(0.5, 0, 0); // move reference frame to lidar
+	glLineWidth(2.5);
+	glColor3f(1.0, 1.0, 1.0);
+	glBegin(GL_LINES);
+	// TODO: swap the following for your actual laser scans
+	if (GPSSMObjPtr->Counter != 0) {
+		DisplayNorthing[GPSSMObjPtr->Counter] = GPSSMObjPtr->Northing;
+		DisplayEasting[GPSSMObjPtr->Counter] = GPSSMObjPtr->Easting;
+		DisplayHeight[GPSSMObjPtr->Counter] = GPSSMObjPtr->Height;
+	}
+
+	for (int i = 0; i < GPSSMObjPtr->Counter; i++) {
+		addLineGPS(DisplayNorthing[i], DisplayEasting[i], DisplayHeight[i]);
+	}
+	glEnd();
+	glPopMatrix();
+}
+
+void addLineGPS(double x, double y, double z) {
+	glVertex3f(y / 10, z / 10, x / 10);
+}
