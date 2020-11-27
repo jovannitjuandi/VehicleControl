@@ -38,6 +38,8 @@
 #include "Messages.hpp"
 #include "HUD.hpp"
 
+#include "SMObject.h"
+
 void display();
 void reshape(int width, int height);
 void idle();
@@ -50,6 +52,9 @@ void special_keyup(int keycode, int x, int y);
 void mouse(int button, int state, int x, int y);
 void dragged(int x, int y);
 void motion(int x, int y);
+
+void drawLaser();
+void addLine(double x, double y);
 
 using namespace std;
 using namespace scos;
@@ -64,8 +69,27 @@ Vehicle * vehicle = NULL;
 double speed = 0;
 double steering = 0;
 
+
+int counter = 0;
+PM* PMObjPtr = nullptr;
+Disp* DispSMObjPtr = nullptr;
+Laser* LaserSMObjPtr = nullptr;
+
 //int _tmain(int argc, _TCHAR* argv[]) {
 int main(int argc, char ** argv) {
+
+	SMObject PMObj(_TEXT("PMObj"), sizeof(PM));
+	PMObj.SMAccess();
+	PMObjPtr = (PM*)PMObj.pData;
+
+	SMObject DispSMObj(_TEXT("DispSMObj"), sizeof(Disp));
+	DispSMObj.SMAccess();
+	DispSMObjPtr = (Disp*)DispSMObj.pData;
+
+	SMObject LaserSMObj(_TEXT("LaserSMObj"), sizeof(Laser));
+	LaserSMObj.SMAccess();
+	LaserSMObjPtr = (Laser*)LaserSMObj.pData;
+
 
 	const int WINDOW_WIDTH = 800;
 	const int WINDOW_HEIGHT = 600;
@@ -136,12 +160,14 @@ void display() {
 	// draw my vehicle
 	if (vehicle != NULL) {
 		vehicle->draw();
-
+		DispSMObjPtr->Speed = vehicle->getSpeed();
+		DispSMObjPtr->Steer = vehicle->getSteering();
 	}
 
 
 	// draw HUD
 	HUD::Draw();
+	drawLaser();
 
 	glutSwapBuffers();
 };
@@ -174,6 +200,20 @@ double getTime()
 }
 
 void idle() {
+
+	if (PMObjPtr->Shutdown.Flags.Opengl == 1) {
+		exit(0);
+	}
+	if (PMObjPtr->Heartbeats.Flags.Opengl == 0) {
+		PMObjPtr->Heartbeats.Flags.Opengl = 1;
+		counter = 0;
+	}
+	else {
+		counter++;
+		if (counter > 100) {
+			PMObjPtr->Shutdown.Status = 0xFF;
+		}
+	}
 
 	if (KeyManager::get()->isAsciiKeyPressed('a')) {
 		Camera::get()->strafeLeft();
@@ -302,4 +342,24 @@ void motion(int x, int y) {
 	prev_mouse_y = y;
 };
 
+void drawLaser() {
+	glPushMatrix();
+	vehicle->positionInGL();
+	glTranslated(0.5, 0, 0); // move reference frame to lidar
+	glLineWidth(2.5);
+	glColor3f(1.0, 1.0, 1.0);
+	glBegin(GL_LINES);
+	// TODO: swap the following for your actual laser scans
+	for (int x = -5; x < 5; ++x) {
+		//addLine(x, -x * x / 10 + 2.5);
+		addLine(LaserSMObjPtr->Y, LaserSMObjPtr->X);
+	}
+	glEnd();
+	glPopMatrix();
+};
+
+void addLine(double x, double y) {
+	glVertex3f(y, 0.0, x);
+	glVertex3f(y, 1.0, x);
+};
 

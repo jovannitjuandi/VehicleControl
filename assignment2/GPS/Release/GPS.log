@@ -1,6 +1,6 @@
 ﻿  SMObject.cpp
   gps.cpp
-  .NETFramework,Version=v4.6.1.AssemblyAttributes.cpp
+\\Client\D$\Documents\Uni Stuff\2020T3 mtrn3500\Assignments\Ass02\again\assignment2\GPS\gps.cpp(100,26): warning C4018: '<': signed/unsigned mismatch
   Generating Code...
   SMObject.obj : MSIL module encountered; incremental linking is disabled for MSIL; performing full link
   GPS.vcxproj -> H:\Executables\GPS.exe

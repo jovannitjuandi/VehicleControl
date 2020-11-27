@@ -14,45 +14,15 @@ using namespace System::Text;
 	double SMFromGalil;
 };*/
 
-struct Laser {
-	double X[361];
-	double Y[361];
-};
-
-struct SMData {
-	Laser laser;
-};
-
-struct ModuleFlags {
-	unsigned char PM : 1,
-		GPS : 1,
-		Laser : 1,
-		Camera : 1,
-		Vehicle : 1,
-		Unused : 3;
-	// maybe add camera or display module
-};
-
-union ExecFlags {
-	unsigned char Status;
-	ModuleFlags Flags;
-};
-
-struct PM {
-	ExecFlags Heartbeats;
-	ExecFlags Shutdown;
-};
 
 int main()
 {
 	// SHARED MEMORY STUFF
 	SMObject LaserSMObj(_TEXT("LaserSMObj"), sizeof(Laser));
-	LaserSMObj.SMCreate();
 	LaserSMObj.SMAccess();
 	Laser* LaserSMObjPtr = (Laser*)LaserSMObj.pData;
 
 	SMObject PMObj(_TEXT("PMObj"), sizeof(PM));
-	PMObj.SMCreate();
 	PMObj.SMAccess();
 	PM* PMObjPtr = (PM*)PMObj.pData;
 
@@ -106,22 +76,8 @@ int main()
 	int count = 0;
 
 	//Loop
-	while (!_kbhit() && (PMObjPtr->Shutdown.Status != 0xFF)) // figure out how to check for the laser bit only
+	while (!_kbhit() && (PMObjPtr->Shutdown.Flags.Laser != 1)) // figure out how to check for the laser bit only
 	{
-		// Write command asking for data
-		/*Stream->Write(SendData, 0, SendData->Length);
-		// Wait for the server to prepare the data, 1 ms would be sufficient, but used 10 ms
-		System::Threading::Thread::Sleep(10);
-		// Read the incoming data
-		Stream->Read(ReadData, 0, ReadData->Length);
-		// Convert incoming data from an array of unsigned char bytes to an ASCII string
-		ResponseData = System::Text::Encoding::ASCII->GetString(ReadData);
-		//Remove ":" from the string
-		ResponseData = ResponseData->Replace(":", "");
-		// Print the received string on the screen
-		Console::WriteLine(ResponseData);*/
-		// GalilSMObjPtr->SMFromGalil = 159.951;
-
 		// Write command asking for data
 		Stream->WriteByte(0x02);
 		Stream->Write(SendData, 0, SendData->Length);
@@ -140,7 +96,7 @@ int main()
 		// ACTUAL Information
 		array<String^>^ StringArray = ResponseData->Split(Space);
 		double StartAngle = System::Convert::ToInt32(StringArray[23], 16);
-		double Resolution = System::Convert::ToInt32(StringArray[24], 16) / 10000.0;
+		double Resolution = System::Convert::ToInt32(StringArray[24], 16) / 10000.0*3.14/180;
 		int NumRanges = System::Convert::ToInt32(StringArray[25], 16);
 
 		array<double>^ Range = gcnew array<double>(NumRanges);
@@ -164,7 +120,7 @@ int main()
 		else {
 			count++; // time to PM between deactivates
 			if (count > 100) {
-				//PMObjPtr->Shutdown.Status = 0xFF; // Shutdown everything
+				break;
 			}
 		}
 		ResponseData = nullptr;

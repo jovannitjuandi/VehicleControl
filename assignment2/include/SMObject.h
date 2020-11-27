@@ -30,6 +30,43 @@ public:
 	void SetSzname(TCHAR* szname);
 	void SetSize(int size);
 };
+
+struct Laser {
+	double X;
+	double Y;
+};
+
+struct GPS {
+	double Northing;
+	double Easting;
+	double Height;
+	unsigned int CRC;
+};
+
+struct Disp {
+	double Speed;
+	double Steer;
+};
+
+struct ModuleFlags {
+	unsigned char PM : 1,
+		GPS : 1,
+		Laser : 1,
+		Camera : 1,
+		Vehicle : 1,
+		Opengl : 1,
+		Unused : 2;
+};
+
+union ExecFlags {
+	unsigned char Status;
+	ModuleFlags Flags;
+};
+
+struct PM {
+	ExecFlags Heartbeats;
+	ExecFlags Shutdown;
+};
 #endif
 
 

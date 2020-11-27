@@ -20,7 +20,7 @@
   </ItemGroup>
   <PropertyGroup Label="Globals">
     <VCProjectVersion>16.0</VCProjectVersion>
-    <ProjectGuid>{340CC9F8-937C-4ED4-AE65-E50CEC7A3E3F}</ProjectGuid>
+    <ProjectGuid>{1D9502D2-45F2-4212-BE2E-FED0BF173CD9}</ProjectGuid>
     <TargetFrameworkVersion>v4.6.1</TargetFrameworkVersion>
     <Keyword>ManagedCProj</Keyword>
     <RootNamespace>Camera</RootNamespace>
@@ -83,7 +83,6 @@
     <ClCompile>
       <WarningLevel>Level3</WarningLevel>
       <PreprocessorDefinitions>WIN32;_DEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <AdditionalIncludeDirectories>\\Client\D%24\Documents\Uni Stuff\2020T3 mtrn3500\Assignments\Ass02\assignment2\assignment2\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <AdditionalDependencies />
@@ -102,10 +101,11 @@
     <ClCompile>
       <WarningLevel>Level3</WarningLevel>
       <PreprocessorDefinitions>WIN32;NDEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <AdditionalIncludeDirectories>\\Client\D%24\Documents\Uni Stuff\2020T3 mtrn3500\Assignments\Ass02\assignment2\assignment2\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>\\Client\D%24\Documents\Uni Stuff\2020T3 mtrn3500\Assignments\Ass02\again\assignment2\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
-      <AdditionalDependencies />
+      <AdditionalDependencies>glu32.lib;glut32.lib;jpeg.lib;jpeg-static.lib;libzmq-v120-mt-gd-4_0_4.lib;turbojpeg.lib;opengl32.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalLibraryDirectories>\\Client\D%24\Documents\Uni Stuff\2020T3 mtrn3500\Assignments\Ass02\again\assignment2\lib;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
