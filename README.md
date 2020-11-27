@@ -4,5 +4,6 @@
  (also change the include and dependency directory)
  
  Finally, in the executable folder, run SMTest.exe
+ This is a MTRN3500 assignment (UNSW)
  
  note:  This is written in CLR using .NET Framework
